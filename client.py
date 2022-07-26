@@ -1,24 +1,26 @@
 """
-Description: Two way socket communication using socket and threading modules
-And to store that communicated messages into tessrac database using MySQL
+Description: Multi client communication (upto 50 clients can communicate at time) 
+using socket and threading modules And to store that communicated messages into 
+tessrac database using MySQL
 Author: Sonia
 Position: Junior Software Engineer
 
 """
-import threading
-import socket
-import datetime
-import random
-# import mysql.connector
+import threading # importing threading module
+import socket # importing socket module
+import datetime # importing datetime to get datetime when client sent the message to respective client
+import random # importing random to generate random id, when messages are inserted into communication table in tessrac database
+import mysql.connector # importing mysql connector to connect with root mysql
+from time import sleep # importing sleep from time
 
+#  connecting to tessrac database in mysql using imported mysql.connector
+con = mysql.connector.connect(host="localhost", user="root",password="Jagson@5355" ,database="tessrac")
+cur = con.cursor() # using cursor for row by row processing
 
-# con = mysql.connector.connect(host="localhost", user="root",password="Jagson@5355" ,database="tessrac")
-# cur = con.cursor()
-
-alias = input('Your good name: ')
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-h = socket.gethostname()
-client.connect((h, 3003))
+alias = input('Your good name: ') # taking username as a input from the client
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # creating socket object with name of client
+h = socket.gethostname() # getting local machine name
+client.connect((h, 3003)) # connect host with reserved port number
 
 
 def client_receive():
@@ -31,7 +33,7 @@ def client_receive():
                 print(message)
         except:
             print('Error!')
-            client.close()
+            client.close() # close the socket when done
             break
 
 
@@ -43,18 +45,20 @@ def client_send():
             OneTimeFlag = False
         msg = input()
         num = random.randint(5,5000)
-        # message = f'{alias}: {mess}'
         client.send(msg.encode('utf-8'))
 
-        date_time = datetime.datetime.now()
+        date_time = datetime.datetime.now() # taking present datetime
+        # query to insert the messages which are sent to respective client in communication table which is in tessrac database
         query = "Insert into communication values ({},'{}','{}','{}',1,'{}','teja')".format(num,msg,date_time,date_time,alias)
-        # cur.execute(query)
-        # con.commit()
+        cur.execute(query) # executing the query
+        con.commit() # commit the changes that you have done on table
 
 
 receive_thread = threading.Thread(target=client_receive)
 receive_thread.start()
+sleep(.2)
 
 send_thread = threading.Thread(target=client_send)
 send_thread.start()
+sleep(.2)
 

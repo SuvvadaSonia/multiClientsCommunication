@@ -1,26 +1,27 @@
 """
-Description: Two way socket communication using socket and threading modules
-And to store that communicated messages into tessrac database using MySQL
+Description: Multi client communication (upto 50 clients can communicate at time) 
+using socket and threading modules And to store that communicated messages into 
+tessrac database using MySQL
 Author: Sonia
 Position: Junior Software Engineer
 
 """
-import queue
-import threading
-import socket
-from time import sleep
+import queue # importing queue module
+import threading # importing a threading module
+import socket # importing a socket module
+from time import sleep # importing sleep from time
 
-host = socket.gethostname()
-port = 3003
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind((host, port))
-server.listen()
+
+host = socket.gethostname() # Get local machine name
+port = 3003 # reserve a port for your service
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # creating a socket object with name of server
+server.bind((host, port)) # bind the host with port
+server.listen() # Now waiting for client connections
+
+
 clients = {}
 aliases = []
 
-# def router(client,data):
-#     if client in clients:
-#         clients[client].send(data.encode('utf-8'))
 
 # Function to handle clients'connections
 

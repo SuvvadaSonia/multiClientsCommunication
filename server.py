@@ -1,5 +1,5 @@
 """
-Description: Two way socket communication using socket and threading modules
+Description: Multi client communication using socket and threading modules
 And to store that communicated messages into tessrac database using MySQL
 Author: Sonia
 Position: Junior Software Engineer
@@ -63,8 +63,8 @@ def receive():
         message = clients[client_length].recv(1024).decode('utf-8')
         # router(clients[client_length],'{} has connected to the chat room with client ID: {}'.format(alias,client_length))
         client.send('you are now connected!'.encode('utf-8'))
-        # thread = threading.Thread(target=handle_client, args=(client_length,))
-        # thread.start()
+        thread = threading.Thread(target=handle_client, args=(client_length,))
+        thread.start()
 
 
 

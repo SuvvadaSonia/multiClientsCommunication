@@ -1,5 +1,5 @@
 """
-Description: Two way socket communication using socket and threading modules
+Description: Multi client communication using socket and threading modules
 And to store that communicated messages into tessrac database using MySQL
 Author: Sonia
 Position: Junior Software Engineer

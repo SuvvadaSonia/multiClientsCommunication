@@ -26,39 +26,40 @@ client.connect((h, 3003)) # connect host with reserved port number
 def client_receive():
     while True:
         try:
-            message = client.recv(1024).decode('utf-8')
+            message = client.recv(1024).decode('utf-8') # receives message from client
             if message == "alias?":
-                client.send(alias.encode('utf-8'))
+                client.send(alias.encode('utf-8')) # encode the name of user
             else:
-                print(message)
+                print(message) # prints message
         except:
-            print('Error!')
+            print('Error!') # prints Error!
             client.close() # close the socket when done
             break
 
 
 def client_send():
-    OneTimeFlag = True
+    OneTimeFlag = True # initiate onetimeflag as True
     while True:
         if OneTimeFlag is True:
-            client.send(b'register')
-            OneTimeFlag = False
-        msg = input()
-        num = random.randint(5,5000)
-        client.send(msg.encode('utf-8'))
+            client.send(b'register') # client will be registered
+            OneTimeFlag = False # once the client was registered, Change onetimeflag to false to decrease duplicate clients
+        msg = input() # taking the message that wants to send from the user
+        receiver, msg = msg.split(':',1) # seperate receiver name and message
+        client.send(msg.encode('utf-8')) # encoding the message and send
 
+        num = random.randint(5,5000) # generating random number to use as id in communication table
         date_time = datetime.datetime.now() # taking present datetime
         # query to insert the messages which are sent to respective client in communication table which is in tessrac database
-        query = "Insert into communication values ({},'{}','{}','{}',1,'{}','teja')".format(num,msg,date_time,date_time,alias)
+        query = "Insert into communication values ({},'{}','{}','{}',1,'{}','{}')".format(num,msg,date_time,date_time,alias,receiver)
         cur.execute(query) # executing the query
         con.commit() # commit the changes that you have done on table
 
 
-receive_thread = threading.Thread(target=client_receive)
-receive_thread.start()
-sleep(.2)
+receive_thread = threading.Thread(target=client_receive) # initiating receive_thread
+receive_thread.start() # Running the client_receive function using Thread
+sleep(.2) # wait for .2 seconds
 
-send_thread = threading.Thread(target=client_send)
-send_thread.start()
-sleep(.2)
+send_thread = threading.Thread(target=client_send) # initiating send_thread
+send_thread.start() # Running the client_receive function using Thread
+sleep(.2) # wait for .2 seconds
 
